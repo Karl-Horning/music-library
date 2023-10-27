@@ -126,5 +126,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# database files
+# database and Prisma files
 *.db
+*.db-journal

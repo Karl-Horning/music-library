@@ -20,6 +20,6 @@ model Album {
   id          String @id @map("id")
   title       String
   year        Int
-  artist_id   String @map("artist_id")
-  artist      Artist @relation(fields: [artist_id], references: [id])
+  artistId    String @map("artistId")
+  artist      Artist @relation(fields: [artistId], references: [id])
 }

@@ -1,4 +1,5 @@
 const { ApolloServer } = require("apollo-server");
+const { PrismaClient } = require("@prisma/client");
 const resolvers = require("./resolvers");
 const typeDefs = require("./schemas");
 const dotenv = require("dotenv");
@@ -9,7 +10,16 @@ dotenv.config();
 // Get the port number from the environment variables, or use 3000 as the default
 const port = process.env.PORT || 3000;
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const prisma = new PrismaClient();
+
+const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: ({ req }) => ({
+        ...req,
+        prisma,
+    }),
+});
 
 server
     .listen({ port })

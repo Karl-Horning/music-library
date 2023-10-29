@@ -10,6 +10,13 @@ const resolvers = {
                     name: "asc",
                 },
             }),
+        artist: async (_, { id }, { prisma }) => {
+            return prisma.artist.findUnique({
+                where: {
+                    id,
+                },
+            });
+        },
     },
     Mutation: {
         createArtist: async (_, { name }, { prisma }) => {

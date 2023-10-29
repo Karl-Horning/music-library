@@ -4,6 +4,7 @@ const typeDefs = gql`
     type Query {
         hello: String
         artists: [Artist!]!
+        artist(id: ID!): Artist!
     }
 
     type Mutation {

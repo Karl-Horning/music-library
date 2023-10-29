@@ -10,7 +10,9 @@ dotenv.config();
 // Get the port number from the environment variables, or use 3000 as the default
 const port = process.env.PORT || 3000;
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+    log: ["query"], // Enable query logging
+});
 
 const server = new ApolloServer({
     typeDefs,

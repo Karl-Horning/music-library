@@ -16,6 +16,7 @@ const typeDefs = gql`
             year: Int!
             artistId: ID!
         ): Album!
+        deleteAlbum(id: ID!): Album!
         updateArtist(id: ID!, name: String!): Artist!
         updateAlbum(
             id: ID!

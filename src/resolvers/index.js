@@ -74,6 +74,20 @@ const resolvers = {
             }
         },
 
+        deleteAlbum: async (_, { id }, { prisma }) => {
+            try {
+                const album = await prisma.album.delete({
+                    where: {
+                        id,
+                    },
+                });
+                return album;
+            } catch (error) {
+                console.error("Error deleting album:", error);
+                throw new Error("Failed to delete album");
+            }
+        },
+
         updateArtist: async (_, { id, name }, { prisma }) => {
             try {
                 const artist = await prisma.artist.update({

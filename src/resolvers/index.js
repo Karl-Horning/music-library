@@ -135,16 +135,8 @@ const resolvers = {
     },
 
     Artist: {
-        albums: ({ id }, __, { prisma }) => {
-            return prisma.album.findMany({
-                where: {
-                    artistId: id,
-                },
-                orderBy: {
-                    year: "asc",
-                },
-            });
-        },
+        albums: ({ id }, __, { loaders: { albumsLoader } }) =>
+            albumsLoader.load(id),
     },
 
     Album: {

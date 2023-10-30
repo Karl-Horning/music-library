@@ -3,6 +3,7 @@ const { PrismaClient } = require("@prisma/client");
 const resolvers = require("./resolvers");
 const typeDefs = require("./schemas");
 const dotenv = require("dotenv");
+const albumsDataLoader = require("./dataloaders/albums.dataloader");
 
 // Load environment variables from .env file
 dotenv.config();
@@ -20,6 +21,9 @@ const server = new ApolloServer({
     context: ({ req }) => ({
         ...req,
         prisma,
+        loaders: {
+            albumsLoader: albumsDataLoader(),
+        },
     }),
 });
 

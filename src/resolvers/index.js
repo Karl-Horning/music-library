@@ -38,8 +38,13 @@ const resolvers = {
                 });
                 return artist;
             } catch (error) {
-                console.error("Error creating artist:", error);
-                throw new Error("Failed to create artist");
+                if (error.code === "P2002") {
+                    console.error("Artist name must be unique.");
+                    throw new Error("Failed to create artist");
+                } else {
+                    console.error("Error creating artist:", error);
+                    throw new Error("Failed to create artist");
+                }
             }
         },
 

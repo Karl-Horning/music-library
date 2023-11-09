@@ -1,43 +1,58 @@
 const { ApolloServer } = require("apollo-server");
-const { PrismaClient } = require("@prisma/client");
 const resolvers = require("./resolvers");
 const typeDefs = require("./schemas");
 const dotenv = require("dotenv");
 const albumsDataLoader = require("./dataloaders/albums.dataloader");
+const { createDataSources } = require("./dataSources");
 
-// Load environment variables from .env file
+/**
+ * Loads environment variables from a .env file.
+ */
 dotenv.config();
 
-// Get the port number from the environment variables, or use 3000 as the default
+/**
+ * The port number for the Apollo Server.
+ * @type {number}
+ */
 const port = process.env.PORT || 3000;
 
-const prisma = new PrismaClient({
-    log: ["query"], // Enable query logging
-});
-
+/**
+ * The Apollo Server instance for serving GraphQL requests.
+ * @type {ApolloServer}
+ */
 const server = new ApolloServer({
     typeDefs,
     resolvers,
     context: ({ req }) => ({
         ...req,
-        prisma,
+        dataSources: createDataSources(),
         loaders: {
             albumsLoader: albumsDataLoader(),
         },
     }),
 });
 
-server
-    .listen({ port })
-    .then(({ url }) => {
-        console.log(`Starting new Apollo Server at ${url} 🚀`);
-    })
-    .catch((error) => {
-        if (error.code === "EADDRINUSE") {
-            console.error(
-                `Port ${port} is already in use. Please choose another port.`
-            );
-        } else {
-            console.error(`Error starting Apollo Server: ${error}`);
-        }
-    });
+/**
+ * Starts the Apollo Server and listens on the specified port.
+ * @function
+ * @param {number} port - The port number to listen on.
+ */
+function startApolloServer(port) {
+    server
+        .listen({ port })
+        .then(({ url }) => {
+            console.log(`Starting new Apollo Server at ${url} 🚀`);
+        })
+        .catch((error) => {
+            if (error.code === "EADDRINUSE") {
+                console.error(
+                    `Port ${port} is already in use. Please choose another port.`
+                );
+            } else {
+                console.error(`Error starting Apollo Server: ${error}`);
+            }
+        });
+}
+
+// Call the function to start the server
+startApolloServer(port);

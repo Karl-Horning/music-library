@@ -1,5 +1,6 @@
 const { DataSource } = require("apollo-datasource");
 const { v4: uuidv4 } = require("uuid");
+const { handleError, CustomError } = require("../helpers/errorHandler");
 
 /**
  * Data source class for interacting with album data.
@@ -23,7 +24,11 @@ class AlbumsDataSource extends DataSource {
      * @returns {Promise<Object|null>} A promise that resolves to the album or null if not found.
      */
     async getAlbumById(id) {
-        return this.prisma.album.findUnique({ where: { id } });
+        try {
+            return this.prisma.album.findUnique({ where: { id } });
+        } catch (error) {
+            handleError(error, "Error getting album");
+        }
     }
 
     /**
@@ -47,8 +52,7 @@ class AlbumsDataSource extends DataSource {
             });
             return album;
         } catch (error) {
-            console.error("Error creating album:", error);
-            throw new Error("Failed to create album");
+            handleError(error, "Error creating album");
         }
     }
 
@@ -68,8 +72,7 @@ class AlbumsDataSource extends DataSource {
             });
             return album;
         } catch (error) {
-            console.error("Error deleting album:", error);
-            throw new Error("Failed to delete album");
+            handleError(error, "Error deleting album");
         }
     }
 
@@ -98,11 +101,12 @@ class AlbumsDataSource extends DataSource {
                 });
                 return album;
             } catch (error) {
-                console.error("Error updating album:", error);
-                throw new Error("Failed to update album");
+                handleError(error, "Error updating album");
             }
         } else {
-            throw new Error("Enter either a new title, year, or artistId");
+            throw new CustomError(
+                "Enter either a new title, year, or artistId"
+            );
         }
     }
 }

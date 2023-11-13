@@ -1,5 +1,6 @@
 const { DataSource } = require("apollo-datasource");
 const { v4: uuidv4 } = require("uuid");
+const { handleError, CustomError } = require("../helpers/errorHandler");
 
 /**
  * Data source class for interacting with artist data.
@@ -22,11 +23,15 @@ class ArtistsDataSource extends DataSource {
      * @returns {Promise<Object[]>} A promise that resolves to an array of artists.
      */
     async getAllArtists() {
-        return this.prisma.artist.findMany({
-            orderBy: {
-                name: "asc",
-            },
-        });
+        try {
+            return this.prisma.artist.findMany({
+                orderBy: {
+                    name: "asc",
+                },
+            });
+        } catch (error) {
+            handleError(error, "Error getting artists");
+        }
     }
 
     /**
@@ -36,11 +41,15 @@ class ArtistsDataSource extends DataSource {
      * @returns {Promise<Object|null>} A promise that resolves to the artist or null if not found.
      */
     async getArtistById(id) {
-        return this.prisma.artist.findUnique({
-            where: {
-                id,
-            },
-        });
+        try {
+            return this.prisma.artist.findUnique({
+                where: {
+                    id,
+                },
+            });
+        } catch (error) {
+            handleError(error, "Error getting artist");
+        }
     }
 
     /**
@@ -61,11 +70,9 @@ class ArtistsDataSource extends DataSource {
             return artist;
         } catch (error) {
             if (error.code === "P2002") {
-                console.error("Artist name must be unique:", error);
-                throw new Error("Failed to create artist");
+                throw new CustomError("Artist name must be unique");
             } else {
-                console.error("Error creating artist:", error);
-                throw new Error("Failed to create artist");
+                handleError(error, "Failed to create artist");
             }
         }
     }
@@ -86,8 +93,7 @@ class ArtistsDataSource extends DataSource {
             });
             return artist;
         } catch (error) {
-            console.error("Error deleting artist:", error);
-            throw new Error("Failed to delete artist");
+            handleError(error, "Failed to delete artist");
         }
     }
 
@@ -111,8 +117,7 @@ class ArtistsDataSource extends DataSource {
             });
             return artist;
         } catch (error) {
-            console.error("Error updating artist:", error);
-            throw new Error("Failed to update artist");
+            handleError(error, "Failed to update artist");
         }
     }
 }
